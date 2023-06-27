@@ -1,9 +1,10 @@
 import cv2
 import csv
+from datetime import datetime
 import pyrealsense2 as rs
 import numpy as np
-from realsense_depth import *
 import os
+
 
 # Creating a pipelines
 pipe1= rs.pipeline()
@@ -24,7 +25,7 @@ pipe1.start(cfg1)
 pipe2.start(cfg2)
 
 # Create a folder to save the images
-output_folder = 'images'
+output_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
 os.makedirs(output_folder, exist_ok=True)
 
 # Creating a CSV file to save the captured image data
@@ -57,6 +58,9 @@ try:
         color_image1= np.asanyarray(color_frame1.get_data())
         color_image2= np.asanyarray(color_frame2.get_data())
 
+        # Gets the current timestamp
+        timestamp = datetime.now().strftime("%H-%M-%S")
+        
         # Saves the color image as a file
         img_count+=1
         col_img_filename1= f'c_image_1_{img_count}.jpg'
@@ -80,7 +84,7 @@ try:
         cv2.imwrite(image_path_2d, depth_image2)
 
         ## Add the image names to a CSV file
-        img_csv_writer.writerow([col_img_filename1, depth_img_filename1, col_img_filename2, depth_img_filename2])
+        img_csv_writer.writerow([col_img_filename1, depth_img_filename1, col_img_filename2, depth_img_filename2, timestamp])
 
 
 finally:
